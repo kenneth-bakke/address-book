@@ -1,3 +1,4 @@
+const { query } = require('../../db/index');
 const db = require('../../db/index');
 
 module.exports = {
@@ -36,13 +37,20 @@ module.exports = {
     const { firstName, lastName, email, address } = contactInfo;
     const addr = JSON.parse(address);
     const { street_number, street_name, city, state, country, zipcode } = addr;
-    const personQuery = `INSERT IGNORE INTO person (first_name, last_name) VALUES (?, ?);`;
+    const personQuery = `
+      INSERT IGNORE INTO person (first_name, last_name)
+        VALUES (?, ?);
+    `;
 
-    const emailQuery = `INSERT IGNORE INTO email (email_address, person_id)
-        VALUES (?, (SELECT id FROM person WHERE first_name = ? AND last_name = ?));`;
+    const emailQuery = `
+      INSERT IGNORE INTO email (email_address, person_id)
+        VALUES (?, (SELECT id FROM person WHERE first_name = ? AND last_name = ?));
+    `;
 
-    const addressQuery = `INSERT IGNORE INTO address (street_number, street_name, city, state, country, zipcode, owner_id)
-        VALUES (?, ?, ?, ?, ?, ?, (SELECT id FROM person WHERE first_name = ? AND last_name = ?));`;
+    const addressQuery = `
+      INSERT IGNORE INTO address (street_number, street_name, city, state, country, zipcode, owner_id)
+        VALUES (?, ?, ?, ?, ?, ?, (SELECT id FROM person WHERE first_name = ? AND last_name = ?));
+    `;
 
     const personArgs = [firstName, lastName];
     const emailArgs = [email, firstName, lastName];
@@ -100,7 +108,12 @@ module.exports = {
     ];
 
     if (this.contactExists(contactId)) {
-      cb(null);
+      try {
+        await db.query(queryString, queryArgs);
+        cb(null);
+      } catch (e) {
+        cb(e);
+      }
     } else {
       cb('Contact does not exist');
     }

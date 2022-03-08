@@ -8,7 +8,6 @@ module.exports = {
     });
   },
   createContact: function (req, res) {
-    console.log(req.params);
     const contactInfo = req.query;
     contacts.createContact(contactInfo, (e) => {
       if (e) res.sendStatus(404);
