@@ -18,7 +18,7 @@ CREATE TABLE address (
   `street_number` INT NOT NULL,
   `street_name` VARCHAR(100),
   `city` VARCHAR(100),
-  `us_state` VARCHAR(100),
+  `state` VARCHAR(100),
   `country` VARCHAR(100),
   `zipcode` INT,
   FOREIGN KEY (`owner_id`)

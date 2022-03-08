@@ -2,22 +2,25 @@ const { contacts } = require('../models/');
 
 module.exports = {
   getContacts: function (req, res) {
-    contacts.getContacts((e, people) => {
+    contacts.getContacts(req.query, (e, people) => {
       if (e) res.sendStatus(404);
-      console.log(people);
-      res.status(200).send(people);
+      else res.status(200).send(people);
     });
   },
   createContact: function (req, res) {
     const contactInfo = req.query;
-    contacts.createContact(contactInfo, (e, message) => {
-      if (e) res.sendStatus(400);
-      res.status(201).send(message);
+    contacts.createContact(contactInfo, (e) => {
+      if (e) res.sendStatus(404);
+      else res.status(201).send('Contact added');
     });
-    res.status(200);
   },
   editContact: function (req, res) {
-    res.status(200);
+    const contactInfo = req.body;
+    const { contact_id } = req.params;
+    contacts.editContact(contactInfo, Number(contact_id), (e) => {
+      if (e) res.status(404).send(e);
+      else res.sendStatus(201);
+    });
   },
   deleteContact: function (req, res) {
     res.status(200);

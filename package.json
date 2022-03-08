@@ -4,10 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "mysql -u root < ./db/schema.sql && nodemon ./server/index.js --watch",
+    "start:create": "mysql -u root < ./db/schema.sql",
+    "start:load": "node ./db/loader.js",
+    "start:run": "nodemon ./server/index.js --watch",
+    "start": "concurrently npm:start:*",
     "test": "jest ./server/__tests__/"
   },
   "dependencies": {
+    "concurrently": "^7.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "mysql2": "2.3.3",

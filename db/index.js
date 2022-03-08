@@ -1,5 +1,4 @@
 const mysql2 = require('mysql2');
-const fs = require('fs');
 
 const pool = mysql2.createPool({
   host: '127.0.0.1',
@@ -24,6 +23,7 @@ promisePool
   })
   .then((res) => {
     console.log(`Connected to MySQL database ${database_name}`);
+    return;
   })
   .catch((e) => {
     console.log(e);
