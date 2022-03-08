@@ -82,18 +82,19 @@ module.exports = {
       address;
 
     const queryString = `UPDATE IGNORE person, email, address
-      SET person.first_name=?,
-      person.last_name=?,
-      email.email_address=?,
-      address.city=?,
-      address.state=?,
-      address.country=?,
-      address.zipcode=?,
-      address.street_name=?,
-      address.street_number=?
-    WHERE person.id = ${contactId}
-    AND person.id = email.person_id
-    AND person.id = address.owner_id`;
+        SET person.first_name=?,
+        person.last_name=?,
+        email.email_address=?,
+        address.city=?,
+        address.state=?,
+        address.country=?,
+        address.zipcode=?,
+        address.street_name=?,
+        address.street_number=?
+      WHERE person.id = ${contactId}
+      AND person.id = email.person_id
+      AND person.id = address.owner_id
+    `;
 
     const queryArgs = [
       firstName,
@@ -118,7 +119,28 @@ module.exports = {
       cb('Contact does not exist');
     }
   },
-  deleteContact: function () {}, // TODO
+  deleteContact: async function (contactId, cb) {
+    const queryString = `
+      DELETE FROM person, email, address
+        USING person
+        INNER JOIN email
+        INNER JOIN address
+        WHERE person.id = ${contactId}
+        AND email.person_id = person.id
+        AND address.owner_id = person.id
+    `;
+
+    if (this.contactExists(contactId)) {
+      try {
+        await db.query(queryString);
+        cb(null);
+      } catch (e) {
+        cb(e);
+      }
+    } else {
+      cb('Contact does not exist');
+    }
+  }, // TODO
   contactExists: async function (contactId) {
     try {
       const contact = await db.query(
