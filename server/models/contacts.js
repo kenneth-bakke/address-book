@@ -1,11 +1,33 @@
 const db = require('../../db/index');
 
 module.exports = {
-  getContacts: async function (cb) {
-    const queryString = `SELECT P.first_name, P.last_name, E.email_address FROM person P JOIN email E ON P.id = E.person_id;`;
+  getContacts: async function (params, cb) {
+    let { pageCount, page } = params;
+    if (!pageCount) pageCount = 5;
+    if (!page) page = 1;
+    const queryString = `SELECT P.id, P.first_name, P.last_name, E.email_address,
+                          JSON_OBJECT(
+                            'street_number', A.street_number,
+                            'street_name', A.street_name,
+                            'city', A.city,
+                            'state', A.state,
+                            'country', A.country,
+                            'zipcode', A.zipcode
+                          )
+                          AS address FROM person P
+                            JOIN email E ON P.id = E.person_id
+                            JOIN address A ON P.id = A.owner_id
+                          GROUP BY P.id
+                          LIMIT ${pageCount}
+                          OFFSET ${(page - 1) * pageCount};
+                          `;
     try {
       const res = await db.query(queryString);
-      cb(null, res[0]);
+      if (res[0]?.length > 0) {
+        cb(null, res[0]);
+      } else {
+        cb('Out of bounds', null);
+      }
     } catch (e) {
       cb(e, null);
     }
@@ -13,14 +35,13 @@ module.exports = {
   createContact: async function (contactInfo, cb) {
     const { firstName, lastName, email, address } = contactInfo;
     const addr = JSON.parse(address);
-    const { street_number, street_name, city, us_state, country, zipcode } =
-      addr;
+    const { street_number, street_name, city, state, country, zipcode } = addr;
     const personQuery = `INSERT IGNORE INTO person (first_name, last_name) VALUES (?, ?);`;
 
     const emailQuery = `INSERT IGNORE INTO email (email_address, person_id)
         VALUES (?, (SELECT id FROM person WHERE first_name = ? AND last_name = ?));`;
 
-    const addressQuery = `INSERT IGNORE INTO address (street_number, street_name, city, us_state, country, zipcode, owner_id)
+    const addressQuery = `INSERT IGNORE INTO address (street_number, street_name, city, state, country, zipcode, owner_id)
         VALUES (?, ?, ?, ?, ?, ?, (SELECT id FROM person WHERE first_name = ? AND last_name = ?));`;
 
     const personArgs = [firstName, lastName];
@@ -29,7 +50,7 @@ module.exports = {
       street_number,
       street_name,
       city,
-      us_state,
+      state,
       country,
       zipcode,
       firstName,
@@ -40,11 +61,60 @@ module.exports = {
       db.query(personQuery, personArgs);
       db.query(emailQuery, emailArgs);
       db.query(addressQuery, addressArgs);
-      cb(null, 'Posted');
+      cb(null);
     } catch (e) {
-      cb(e, null);
+      cb(e);
     }
-  }, // TODO
-  editContact: function () {}, // TODO
+  },
+  editContact: async function (contactInfo, contactId, cb) {
+    if (!contactId) cb('Contact does not exist');
+
+    const { firstName, lastName, email, address } = contactInfo;
+    const { street_number, street_name, city, state, country, zipcode } =
+      address;
+
+    const queryString = `UPDATE IGNORE person, email, address
+      SET person.first_name=?,
+      person.last_name=?,
+      email.email_address=?,
+      address.city=?,
+      address.state=?,
+      address.country=?,
+      address.zipcode=?,
+      address.street_name=?,
+      address.street_number=?
+    WHERE person.id = ${contactId}
+    AND person.id = email.person_id
+    AND person.id = address.owner_id`;
+
+    const queryArgs = [
+      firstName,
+      lastName,
+      email,
+      city,
+      state,
+      country,
+      zipcode,
+      street_name,
+      street_number,
+    ];
+
+    if (this.contactExists(contactId)) {
+      cb(null);
+    } else {
+      cb('Contact does not exist');
+    }
+  },
   deleteContact: function () {}, // TODO
+  contactExists: async function (contactId) {
+    try {
+      const contact = await db.query(
+        `SELECT * FROM person WHERE id = ${contactId}`
+      );
+      if (contact[0]?.length <= 0) return false;
+      else return true;
+    } catch (e) {
+      return false;
+    }
+  },
 };
