@@ -23,6 +23,10 @@ module.exports = {
     });
   },
   deleteContact: function (req, res) {
-    res.status(200);
+    const { contact_id } = req.params;
+    contacts.deleteContact(Number(contact_id), (e) => {
+      if (e) res.status(404).send(e);
+      else res.sendStatus(204);
+    });
   },
 };
