@@ -55,14 +55,16 @@ export default function ContactForm() {
               required={true}
               autoFocus={true}
               id={'firstName'}
-              placeholder={editMode ? selectedContact.first_name : 'First Name'}
+              placeholder={'First Name'}
+              value={editMode ? selectedContact.first_name : null}
               onChange={handleChange}
             />
             <input
               type='text'
               required={true}
               id={'lastName'}
-              placeholder={editMode ? selectedContact.last_name : 'Last Name'}
+              placeholder={'Last Name'}
+              value={editMode ? selectedContact.last_name : null}
               onChange={handleChange}
             />
           </NameInput>
@@ -72,11 +74,12 @@ export default function ContactForm() {
               type='text'
               required={true}
               id={'street'}
-              placeholder={
+              placeholder={'Street'}
+              value={
                 editMode
                   ? selectedContact.address.street_number +
                     selectedContact.address.street_name
-                  : 'Street'
+                  : null
               }
               onChange={handleChange}
             />
@@ -84,13 +87,15 @@ export default function ContactForm() {
               type='text'
               required={true}
               id={'city'}
-              placeholder={editMode ? selectedContact.address.city : 'City'}
+              placeholder={'City'}
+              value={editMode ? selectedContact.address.city : null}
               onChange={handleChange}
             />
             <StateSelector
               id={'state'}
               required={true}
-              placeholder={editMode ? selectedContact.address.state : 'State'}
+              placeholder={'State'}
+              value={editMode ? selectedContact.address.state : null}
               onChange={handleChange}
             >
               <option value=''>...Choose a State...</option>
@@ -106,32 +111,32 @@ export default function ContactForm() {
             type='text'
             required={true}
             id={'zipcode'}
-            placeholder={editMode ? selectedContact.address.zipcode : 'Zipcode'}
+            placeholder={'Zipcode'}
+            value={editMode ? selectedContact.address.zipcode : null}
             onChange={handleChange}
           />
           <input
             type='text'
             required={true}
             id={'country'}
-            placeholder={editMode ? selectedContact.address.country : 'Country'}
+            placeholder={'Country'}
+            value={editMode ? selectedContact.address.country : null}
             onChange={handleChange}
           />
           <br />
           <input
             type='text'
             id={'phoneNumber'}
-            placeholder={
-              editMode ? selectedContact.phone_number : '(123) 456-7890'
-            }
+            placeholder={'(123) 456-7890'}
+            value={editMode ? selectedContact.phone_number : null}
             onChange={handleChange}
           />
           <input
             type='email' // I know you can do this with Regex but I am not good at Regex full disclosure
             required={true}
             id={'email'}
-            placeholder={
-              editMode ? selectedContact.email_address : 'name@email.com'
-            }
+            placeholder={'name@email.com'}
+            value={editMode ? selectedContact.email_address : null}
             onChange={handleChange}
           />
           <button className='ui button'>Submit Changes</button>
