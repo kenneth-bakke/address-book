@@ -35,8 +35,8 @@ module.exports = {
   },
   createContact: async function (contactInfo, cb) {
     const { firstName, lastName, email, phoneNumber, address } = contactInfo;
-    const addr = JSON.parse(address);
-    const { street_number, street_name, city, state, country, zipcode } = addr;
+    const { street_number, street_name, city, state, country, zipcode } =
+      address;
     const personQuery = `
       INSERT IGNORE INTO person (first_name, last_name, phone_number)
         VALUES (?, ?, ?);

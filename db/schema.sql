@@ -30,7 +30,7 @@ CREATE TABLE address (
 CREATE TABLE `email` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `person_id` INT,
-  `email_address` VARCHAR(100),
+  `email_address` VARCHAR(317),
   FOREIGN KEY (`person_id`)
     REFERENCES `person`(`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   PRIMARY KEY(`id`)
