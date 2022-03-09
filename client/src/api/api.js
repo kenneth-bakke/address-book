@@ -1,4 +1,4 @@
 const serverPort = 8000;
-const baseURL = `http://34.212.228.141:${serverPort}/`;
+const baseURL = `http://127.0.0.1:${serverPort}/`;
 
 module.exports = baseURL;

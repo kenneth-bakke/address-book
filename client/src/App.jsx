@@ -31,7 +31,6 @@ export default function App() {
   };
 
   const addContact = () => {
-    const newContact = formatFormData(formData);
     var url = new URL(`${baseURL}contacts`);
 
     fetch(url, {
@@ -39,7 +38,7 @@ export default function App() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newContact),
+      body: JSON.stringify(formData),
     })
       .then((res) => {
         if (res.status === 201) {
@@ -51,15 +50,14 @@ export default function App() {
   };
 
   const editContact = () => {
-    const newData = formatFormData(formData);
-    var url = new URL(`${baseURL}contacts/${selectedContact.id}`);
-
+    var url = new URL(`${baseURL}contacts/${formData.id}`);
+    var data = formData;
     fetch(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newData),
+      body: JSON.stringify(formData),
     })
       .then((res) => {
         if (res.status === 201) {

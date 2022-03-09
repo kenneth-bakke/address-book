@@ -77,10 +77,12 @@ module.exports = {
   editContact: async function (contactInfo, contactId, cb) {
     if (!contactId) cb('Contact does not exist');
 
-    const { firstName, lastName, email, phone_number, address } = contactInfo;
-    const { street_number, street_name, city, state, country, zipcode } =
-      address;
-
+    const { first_name, last_name, email_address, phone_number, address } =
+      contactInfo;
+    const { street, city, state, country, zipcode } = address;
+    let streetArray = street.split(' ');
+    let street_number = streetArray.shift();
+    let street_name = streetArray.join(' ');
     const queryString = `UPDATE IGNORE person, email, address
         SET person.first_name=?,
         person.last_name=?,
@@ -98,9 +100,9 @@ module.exports = {
     `;
 
     const queryArgs = [
-      firstName,
-      lastName,
-      email,
+      first_name,
+      last_name,
+      email_address,
       phone_number,
       city,
       state,

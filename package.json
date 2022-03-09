@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:create": "mysql -u admin -p '' < ./db/schema.sql",
+    "start:create": "mysql -u root < ./db/schema.sql",
     "start:load": "node ./db/loader.js",
     "start:run": "nodemon ./server/index.js --watch",
     "start": "concurrently npm:start:*",

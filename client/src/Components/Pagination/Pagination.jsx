@@ -18,6 +18,7 @@ export default function BasicPagination() {
 const PageStyle = styled.div`
   margin: 0 auto;
   padding: 5px;
+  top: 50%;
   bottom: 5px;
   width: 100%;
   height: 100%;

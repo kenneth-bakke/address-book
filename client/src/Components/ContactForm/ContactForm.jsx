@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import AppContext from '../../AppContext';
 import { statesAbbrev } from '../../utils/states';
@@ -15,13 +15,33 @@ export default function ContactForm() {
     selectedContact,
   } = useContext(AppContext);
 
+  useEffect(() => {
+    if (editMode) {
+      setFormData(selectedContact);
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { id, value } = e.target;
-    // TODO: ADD FORMATTERS FOR VALUES BEFORE SETTING FORM DATA
-    setFormData((prevState) => ({
-      ...prevState,
-      [id]: value,
-    }));
+    let properties = [
+      'first_name',
+      'last_name',
+      'phone_number',
+      'email_address',
+    ];
+    if (properties.includes(id)) {
+      setFormData((prevState) => ({
+        ...prevState,
+        [id]: value,
+      }));
+    } else {
+      let address = { ...formData.address };
+      address[id] = value;
+      setFormData((prevState) => ({
+        ...prevState,
+        address,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -54,17 +74,17 @@ export default function ContactForm() {
               type='text'
               required={true}
               autoFocus={true}
-              id={'firstName'}
+              id={'first_name'}
               placeholder={'First Name'}
-              value={editMode ? selectedContact.first_name : null}
+              defaultValue={editMode ? selectedContact.first_name : null}
               onChange={handleChange}
             />
             <input
               type='text'
               required={true}
-              id={'lastName'}
+              id={'last_name'}
               placeholder={'Last Name'}
-              value={editMode ? selectedContact.last_name : null}
+              defaultValue={editMode ? selectedContact.last_name : null}
               onChange={handleChange}
             />
           </NameInput>
@@ -75,10 +95,13 @@ export default function ContactForm() {
               required={true}
               id={'street'}
               placeholder={'Street'}
-              value={
+              defaultValue={
                 editMode
-                  ? selectedContact.address.street_number +
-                    selectedContact.address.street_name
+                  ? JSON.stringify(
+                      selectedContact.address.street_number +
+                        ' ' +
+                        selectedContact.address.street_name
+                    )
                   : null
               }
               onChange={handleChange}
@@ -88,14 +111,14 @@ export default function ContactForm() {
               required={true}
               id={'city'}
               placeholder={'City'}
-              value={editMode ? selectedContact.address.city : null}
+              defaultValue={editMode ? selectedContact.address.city : null}
               onChange={handleChange}
             />
             <StateSelector
               id={'state'}
               required={true}
               placeholder={'State'}
-              value={editMode ? selectedContact.address.state : null}
+              defaultValue={editMode ? selectedContact.address.state : null}
               onChange={handleChange}
             >
               <option value=''>...Choose a State...</option>
@@ -112,7 +135,7 @@ export default function ContactForm() {
             required={true}
             id={'zipcode'}
             placeholder={'Zipcode'}
-            value={editMode ? selectedContact.address.zipcode : null}
+            defaultValue={editMode ? selectedContact.address.zipcode : null}
             onChange={handleChange}
           />
           <input
@@ -120,23 +143,23 @@ export default function ContactForm() {
             required={true}
             id={'country'}
             placeholder={'Country'}
-            value={editMode ? selectedContact.address.country : null}
+            defaultValue={editMode ? selectedContact.address.country : null}
             onChange={handleChange}
           />
           <br />
           <input
             type='text'
-            id={'phoneNumber'}
+            id={'phone_number'}
             placeholder={'(123) 456-7890'}
-            value={editMode ? selectedContact.phone_number : null}
+            defaultValue={editMode ? selectedContact.phone_number : null}
             onChange={handleChange}
           />
           <input
             type='email' // I know you can do this with Regex but I am not good at Regex full disclosure
             required={true}
-            id={'email'}
+            id={'email_address'}
             placeholder={'name@email.com'}
-            value={editMode ? selectedContact.email_address : null}
+            defaultValue={editMode ? selectedContact.email_address : null}
             onChange={handleChange}
           />
           <button className='ui button'>Submit Changes</button>
