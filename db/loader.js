@@ -8,6 +8,7 @@ function createRandomContact() {
   return {
     firstName: name[0],
     lastName: name[1],
+    phoneNumber: name[2],
     email: createEmail(),
     address: createAddress(),
   };
@@ -28,7 +29,11 @@ function createAddress() {
 }
 
 function createPerson() {
-  return [faker.name.firstName(), faker.name.lastName()];
+  return [
+    faker.name.firstName(),
+    faker.name.lastName(),
+    faker.phone.phoneNumberFormat(),
+  ];
 }
 
 function createEmail() {
@@ -40,7 +45,6 @@ promisePool
   .then((connection) => {
     for (let i = 0; i < MAX_CONTACTS; i++) {
       const person = createRandomContact();
-
       contacts.createContact(person, (e) => {
         if (e) console.error(e);
         else console.log(`Added ${person}`);
