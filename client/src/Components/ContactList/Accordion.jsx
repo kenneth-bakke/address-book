@@ -1,4 +1,6 @@
 import React, { useContext, useState } from 'react';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import styled from 'styled-components';
 import AppContext from '../../AppContext';
 
@@ -14,24 +16,26 @@ export default function Accordion({ contact }) {
       <AccordionItem>
         <AccordionTitle onClick={toggleRow}>
           <h3>{`${contact.first_name} ${contact.last_name}`}</h3>
-          <h3>{isActive ? '-' : '+'}</h3>
+          <h3>
+            {isActive ? (
+              <ArrowDropDownIcon fontSize='large' />
+            ) : (
+              <ArrowRightIcon fontSize='large' />
+            )}
+          </h3>
         </AccordionTitle>
         {isActive && (
-          <div>
+          <div className='contact-details'>
             <Phone>
-              <span>
-                <h3>Phone</h3>
-                <Detail>{contact.phone_number}</Detail>
-              </span>
+              <Label>Phone</Label>
+              <Detail>{contact.phone_number}</Detail>
             </Phone>
             <Email>
-              <span>
-                <h3>Email</h3>
-                <Detail>{contact.email_address}</Detail>
-              </span>
+              <Label>Email</Label>
+              <Detail>{contact.email_address}</Detail>
             </Email>
             <Address>
-              <h3>Address</h3>
+              <Label>Address</Label>
               <Detail>
                 {contact.address.street_number} {contact.address.street_name},
               </Detail>
@@ -65,11 +69,13 @@ const AccordionItem = styled.div`
   align-content: stretch;
   align-items: flex-start;
   width: 100%;
-  max-width: 200px;
+  max-width: 300px;
 `;
 
 const AccordionTitle = styled.div`
   margin: 0 auto;
+  width: 100%;
+  max-width: 300px;
   padding: 10px;
   display: flex;
   flex: auto;
@@ -106,4 +112,8 @@ const Address = styled.div`
 
 const Detail = styled.h4`
   margin: 0;
+`;
+
+const Label = styled.h3`
+  font-style: underline;
 `;
