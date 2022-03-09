@@ -12,14 +12,19 @@ module.exports = {
     });
   },
   createContact: function (req, res) {
-    const contactInfo = req.query;
-    contacts.createContact(contactInfo, (e) => {
-      if (e) {
-        res.sendStatus(404);
-      } else {
-        res.status(201).send('Contact added');
-      }
-    });
+    const contactInfo = req.body;
+    if (Object.keys(contactInfo).length > 0) {
+      contacts.createContact(contactInfo, (e) => {
+        if (e) {
+          res.sendStatus(404);
+        } else {
+          console.log(`POST 201`);
+          res.status(201).send('Contact added');
+        }
+      });
+    } else {
+      res.sendStatus(404);
+    }
   },
   editContact: function (req, res) {
     const contactInfo = req.body;

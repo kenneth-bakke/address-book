@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import AppContext from '../../AppContext';
 
 export default function Accordion({ contact }) {
-  const { deleteContact } = useContext(AppContext);
+  const { deleteContact, editMode, setEditMode } = useContext(AppContext);
   const [isActive, setIsActive] = useState(false);
   const toggleRow = () => {
     setIsActive(!isActive);
@@ -45,11 +45,19 @@ export default function Accordion({ contact }) {
               </Detail>
               <Detail>{contact.address.country}</Detail>
             </Address>
+            {editMode ? null : (
+              <button
+                className='ui button'
+                onClick={(e) => deleteContact(e, contact)}
+              >
+                Delete contact
+              </button>
+            )}
             <button
               className='ui button'
-              onClick={(e) => deleteContact(e, contact)}
+              onClick={() => setEditMode(!editMode)}
             >
-              Remove contact
+              {editMode ? 'Apply Changes' : 'Edit Contact'}
             </button>
           </div>
         )}

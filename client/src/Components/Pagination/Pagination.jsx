@@ -1,8 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import AppContext from '../../AppContext';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 import Stack from '@mui/material/Stack';
@@ -23,6 +21,7 @@ const PageStyle = styled.div`
   padding: 5px;
   bottom: 5px;
   width: 100%;
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: row;
