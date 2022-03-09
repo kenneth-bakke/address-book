@@ -25,7 +25,7 @@ function createAddress() {
     country: faker.address.country(),
     zipcode: faker.address.zipCode(),
   };
-  return JSON.stringify(address);
+  return address;
 }
 
 function createPerson() {

@@ -4,8 +4,16 @@ import AppContext from '../../AppContext';
 import { statesAbbrev } from '../../utils/states';
 
 export default function ContactForm() {
-  const { setView, addContact } = useContext(AppContext);
-  const [formData, setFormData] = useState({});
+  const {
+    setView,
+    addContact,
+    editContact,
+    editMode,
+    setEditMode,
+    formData,
+    setFormData,
+    selectedContact,
+  } = useContext(AppContext);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -15,15 +23,24 @@ export default function ContactForm() {
       [id]: value,
     }));
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    addContact(formData);
+    editMode ? editContact() : addContact();
+    setFormData({});
+    e.target.reset();
   };
+
+  const navToContactList = () => {
+    setView('ContactList');
+    setEditMode(false);
+  };
+
   return (
     <>
       <Header>
-        <ListTitle>Add Contact</ListTitle>
-        <button className='ui button' onClick={() => setView('ContactList')}>
+        <ListTitle>{editMode ? 'Edit Contact' : 'Add Contact'}</ListTitle>
+        <button className='ui button' onClick={navToContactList}>
           My Contacts
         </button>
       </Header>
@@ -38,14 +55,14 @@ export default function ContactForm() {
               required={true}
               autoFocus={true}
               id={'firstName'}
-              placeholder={'First Name'}
+              placeholder={editMode ? selectedContact.first_name : 'First Name'}
               onChange={handleChange}
             />
             <input
               type='text'
               required={true}
               id={'lastName'}
-              placeholder={'Last Name'}
+              placeholder={editMode ? selectedContact.last_name : 'Last Name'}
               onChange={handleChange}
             />
           </NameInput>
@@ -55,20 +72,25 @@ export default function ContactForm() {
               type='text'
               required={true}
               id={'street'}
-              placeholder={'Street'}
+              placeholder={
+                editMode
+                  ? selectedContact.address.street_number +
+                    selectedContact.address.street_name
+                  : 'Street'
+              }
               onChange={handleChange}
             />
             <input
               type='text'
               required={true}
               id={'city'}
-              placeholder={'City'}
+              placeholder={editMode ? selectedContact.address.city : 'City'}
               onChange={handleChange}
             />
             <StateSelector
               id={'state'}
               required={true}
-              placeholder={'State'}
+              placeholder={editMode ? selectedContact.address.state : 'State'}
               onChange={handleChange}
             >
               <option value=''>...Choose a State...</option>
@@ -84,28 +106,32 @@ export default function ContactForm() {
             type='text'
             required={true}
             id={'zipcode'}
-            placeholder={'Zipcode'}
+            placeholder={editMode ? selectedContact.address.zipcode : 'Zipcode'}
             onChange={handleChange}
           />
           <input
             type='text'
             required={true}
             id={'country'}
-            placeholder={'Country'}
+            placeholder={editMode ? selectedContact.address.country : 'Country'}
             onChange={handleChange}
           />
           <br />
           <input
             type='text'
             id={'phoneNumber'}
-            placeholder={'(123) 456-7890'}
+            placeholder={
+              editMode ? selectedContact.phone_number : '(123) 456-7890'
+            }
             onChange={handleChange}
           />
           <input
             type='email' // I know you can do this with Regex but I am not good at Regex full disclosure
             required={true}
             id={'email'}
-            placeholder={'name@email.com'}
+            placeholder={
+              editMode ? selectedContact.email_address : 'name@email.com'
+            }
             onChange={handleChange}
           />
           <button className='ui button'>Submit Changes</button>

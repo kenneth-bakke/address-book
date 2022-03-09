@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Accordion from './Accordion';
 import styled from 'styled-components';
+import ContactForm from '../ContactForm/ContactForm';
+import AppContext from '../../AppContext';
 
 export default function ContactDetail({ contact }) {
+  const { editMode } = useContext(AppContext);
   return (
     <Contact>
       <Accordion contact={contact} />

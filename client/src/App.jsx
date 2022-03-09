@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import AppContext from './AppContext';
 import baseURL from './api/api.js';
 import ContactList from './Components/ContactList/ContactList';
-import BasicPagination from './Components/Pagination/Pagination';
+import ContactForm from './Components/ContactForm/ContactForm';
 
 export default function App() {
   const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState({});
   const [pageCount, setPageCount] = useState(5);
   const [page, setPage] = useState(1);
+  const [view, setView] = useState('ContactList');
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({});
 
   // Get contacts based on page number
   useEffect(() => {
@@ -23,6 +27,47 @@ export default function App() {
     fetch(url)
       .then((res) => res.json())
       .then((people) => setContacts(people))
+      .catch((err) => console.error(err));
+  };
+
+  const addContact = () => {
+    const newContact = formatFormData(formData);
+    var url = new URL(`${baseURL}contacts`);
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newContact),
+    })
+      .then((res) => {
+        if (res.status === 201) {
+          alert('Contact added');
+          getContacts();
+        }
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const editContact = () => {
+    const newData = formatFormData(formData);
+    var url = new URL(`${baseURL}contacts/${selectedContact.id}`);
+
+    fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newData),
+    })
+      .then((res) => {
+        if (res.status === 201) {
+          alert('Changes saved');
+          getContacts();
+          setView('ContactList');
+        }
+      })
       .catch((err) => console.error(err));
   };
 
@@ -52,6 +97,55 @@ export default function App() {
     return url;
   };
 
+  // Transforms formData to proper model
+  const formatFormData = (formData) => {
+    const {
+      firstName,
+      lastName,
+      street,
+      city,
+      state,
+      zipcode,
+      country,
+      phoneNumber,
+      email,
+    } = formData;
+    const streetData = getStreetData(street);
+    const newContact = {
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber,
+      email: email,
+      address: {
+        street_number: streetData.street_number,
+        street_name: streetData.street_name,
+        city: city,
+        state: state,
+        zipcode: zipcode,
+        country: country,
+      },
+    };
+    return newContact;
+  };
+
+  // Extracts street data
+  const getStreetData = (street) => {
+    if (typeof street !== 'string') throw new Error('Must be a string');
+    let streetArray = street.split(' ');
+    let name = [];
+    let number = 0;
+    streetArray.forEach((streetItem) => {
+      if (isNaN(streetItem)) {
+        name.push(streetItem);
+      } else {
+        number = parseInt(streetItem);
+      }
+    });
+    name = name.join(' ');
+    return { street_number: number, street_name: name };
+  };
+
+  // Controls pagination scrolling
   const scrollPage = (e) => {
     // Get aria label for page string and convert it to number
     let ariaLabel = e.target.getAttribute('aria-label');
@@ -86,9 +180,28 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{ contacts, page, scrollPage, deleteContact }}>
-      <ContactList />
-      <BasicPagination />
+    <AppContext.Provider
+      value={{
+        contacts,
+        editMode,
+        page,
+        formData,
+        selectedContact,
+        addContact,
+        editContact,
+        deleteContact,
+        setView,
+        setFormData,
+        setEditMode,
+        setSelectedContact,
+        scrollPage,
+      }}
+    >
+      {view === 'ContactList' ? (
+        <ContactList />
+      ) : view === 'ContactForm' ? (
+        <ContactForm />
+      ) : null}
     </AppContext.Provider>
   );
 }

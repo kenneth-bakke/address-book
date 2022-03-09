@@ -5,14 +5,18 @@ import ContactDetail from './ContactDetail';
 import styled from 'styled-components';
 
 export default function ContactList() {
-  const { contacts, setView } = useContext(AppContext);
+  const { contacts, setView, editMode, setEditMode } = useContext(AppContext);
 
   const renderContacts = () => {
+    const toggleView = () => {
+      setView('ContactForm');
+    };
+
     return (
       <>
         <Header>
           <ListTitle>Contacts</ListTitle>
-          <button className='ui button' onClick={() => setView('ContactForm')}>
+          <button className='ui button' onClick={toggleView}>
             Add contact
           </button>
         </Header>

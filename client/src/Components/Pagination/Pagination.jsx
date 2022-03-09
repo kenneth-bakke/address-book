@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import AppContext from '../../AppContext';
 import Pagination from '@mui/material/Pagination';
-import PaginationItem from '@mui/material/PaginationItem';
 import Stack from '@mui/material/Stack';
 
 export default function BasicPagination() {
