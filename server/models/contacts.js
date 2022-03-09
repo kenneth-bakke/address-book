@@ -6,7 +6,7 @@ module.exports = {
     let { pageCount, page } = params;
     if (!pageCount) pageCount = 5;
     if (!page) page = 1;
-    const queryString = `SELECT P.id, P.first_name, P.last_name, E.email_address,
+    const queryString = `SELECT P.id, P.first_name, P.last_name, P.phone_number, E.email_address,
                           JSON_OBJECT(
                             'street_number', A.street_number,
                             'street_name', A.street_name,
@@ -34,12 +34,12 @@ module.exports = {
     }
   },
   createContact: async function (contactInfo, cb) {
-    const { firstName, lastName, email, address } = contactInfo;
+    const { firstName, lastName, email, phoneNumber, address } = contactInfo;
     const addr = JSON.parse(address);
     const { street_number, street_name, city, state, country, zipcode } = addr;
     const personQuery = `
-      INSERT IGNORE INTO person (first_name, last_name)
-        VALUES (?, ?);
+      INSERT IGNORE INTO person (first_name, last_name, phone_number)
+        VALUES (?, ?, ?);
     `;
 
     const emailQuery = `
@@ -52,7 +52,7 @@ module.exports = {
         VALUES (?, ?, ?, ?, ?, ?, (SELECT id FROM person WHERE first_name = ? AND last_name = ?));
     `;
 
-    const personArgs = [firstName, lastName];
+    const personArgs = [firstName, lastName, phoneNumber];
     const emailArgs = [email, firstName, lastName];
     const addressArgs = [
       street_number,
@@ -77,13 +77,14 @@ module.exports = {
   editContact: async function (contactInfo, contactId, cb) {
     if (!contactId) cb('Contact does not exist');
 
-    const { firstName, lastName, email, address } = contactInfo;
+    const { firstName, lastName, email, phone_number, address } = contactInfo;
     const { street_number, street_name, city, state, country, zipcode } =
       address;
 
     const queryString = `UPDATE IGNORE person, email, address
         SET person.first_name=?,
         person.last_name=?,
+        person.phone_number=?,
         email.email_address=?,
         address.city=?,
         address.state=?,
@@ -100,6 +101,7 @@ module.exports = {
       firstName,
       lastName,
       email,
+      phone_number,
       city,
       state,
       country,
