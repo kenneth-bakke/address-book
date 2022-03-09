@@ -8,12 +8,17 @@ export default function ContactList() {
 
   const renderContacts = () => {
     return (
-      <div>
-        <ListTitle>Contacts</ListTitle>
-        {contacts?.map((contact) => (
-          <ContactDetail key={contact?.id} contact={contact} />
-        ))}
-      </div>
+      <>
+        <Header>
+          <AddContact>Add contact</AddContact>
+          <ListTitle>Contacts</ListTitle>
+        </Header>
+        <List>
+          {contacts?.map((contact) => (
+            <ContactDetail key={contact?.id} contact={contact} />
+          ))}
+        </List>
+      </>
     );
   };
 
@@ -33,3 +38,14 @@ const ListTitle = styled.h1`
   overflow: hidden;
 }
 `;
+
+const AddContact = styled.a``;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-between;
+`;
+
+const List = styled.div``;

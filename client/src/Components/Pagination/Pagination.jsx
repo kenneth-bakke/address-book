@@ -1,15 +1,18 @@
 import React, { useContext } from 'react';
-import AppContext from '../../AppContext';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
 import styled from 'styled-components';
+import AppContext from '../../AppContext';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import Stack from '@mui/material/Stack';
 
 export default function BasicPagination() {
-  const { page, scrollPage } = useContext(AppContext);
+  const { scrollPage } = useContext(AppContext);
   return (
     <PageStyle>
       <Stack spacing={2}>
-        <Pagination count={5} onClick={scrollPage} />
+        <Pagination count={19} onClick={scrollPage} />
       </Stack>
     </PageStyle>
   );
@@ -18,10 +21,12 @@ export default function BasicPagination() {
 const PageStyle = styled.div`
   margin: 0 auto;
   padding: 5px;
+  bottom: 5px;
   width: 100%;
+  position: relative;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
   z-index: 9999;
