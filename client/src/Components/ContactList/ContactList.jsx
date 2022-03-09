@@ -1,17 +1,20 @@
 import React, { useContext } from 'react';
 import AppContext from '../../AppContext';
+import BasicPagination from '../Pagination/Pagination';
 import ContactDetail from './ContactDetail';
 import styled from 'styled-components';
 
 export default function ContactList() {
-  const { contacts } = useContext(AppContext);
+  const { contacts, setView } = useContext(AppContext);
 
   const renderContacts = () => {
     return (
       <>
         <Header>
-          <AddContact>Add contact</AddContact>
           <ListTitle>Contacts</ListTitle>
+          <button className='ui button' onClick={() => setView('ContactForm')}>
+            Add contact
+          </button>
         </Header>
         <List>
           {contacts?.map((contact) => (
@@ -22,7 +25,12 @@ export default function ContactList() {
     );
   };
 
-  return <div>{renderContacts()}</div>;
+  return (
+    <div>
+      {renderContacts()}
+      <BasicPagination />
+    </div>
+  );
 }
 
 const ListTitle = styled.h1`
@@ -35,17 +43,23 @@ const ListTitle = styled.h1`
   text-align: center;
   flex-direction: row;
   justify-content: center;
-  overflow: hidden;
 }
 `;
 
-const AddContact = styled.a``;
-
 const Header = styled.div`
+  margin: 0 auto;
+  padding: 10px;
   display: flex;
   flex-direction: row;
-
   justify-content: space-between;
 `;
 
-const List = styled.div``;
+const List = styled.ul`
+  margin: 0 auto;
+  padding: 10px;
+  bottom: 10px;
+  height: 100%;
+  max-height: 500px;
+  overflow: hidden;
+  overflow-y: scroll;
+`;
